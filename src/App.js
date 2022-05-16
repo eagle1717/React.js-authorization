@@ -1,24 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import AppRoutes from "./routes";
+import React from "react";
+import Navbar from "components/Navbar";
+import PageContainer from "components/PageContainer";
+import Toastr from "components/Toastr";
+import { useDispatch, useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router";
 
 function App() {
+  const [cookie] = useCookies(["token"]);
+  const navigate = useNavigate();
+  const toastr = useSelector((state) => state.toastr.toastrInfo);
+
+  useDispatch(() => {
+    if (!cookie.token) {
+      navigate("/sign-in");
+    }
+  }, cookie.token);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+      {Object.keys(toastr).length > 0 && <Toastr />}
+      <div className="mt-5">
+        <PageContainer>
+          <AppRoutes />
+        </PageContainer>
+      </div>
+    </>
   );
 }
 
